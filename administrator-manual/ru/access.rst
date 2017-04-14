@@ -14,25 +14,21 @@
 
 Если установлен модуль web server, то доступ к веб интерфейсу можно получить с помощью адреса ``https://server_name/server-manager``.
 
-The Server Manager uses self-signed SSL certificates.
-You should explicitly accept them the first time you access the server.
-The connection is safe and encrypted.
+Server Manager использует самоподписанный SSL сертификат, использование которого необходимо одобрить при первом подключении к серверу. В этом случае подключение будет защищено.
 
-Login
+Логин
 =====
 
-The login page will gave you a trusted access to the web interface.
-Use following credentials:
+Для подключения к веб интерфейсу необходимо использовать следующие данные:
 
 * :index:`Default user` name: **root**
 * :index:`Default password`: **Nethesis,1234**
 
-.. warning:: Change the root's password as soon as possible, by
-             picking a secure one, composed of a random sequence of
-             mixed-case letters, digits and symbols.
+.. warning:: Пароль учетной записи root необходимо изменить как можно быстрее.
+             С целью обеспечения безопасности, при составлении пароля необходимо
+             использовать буквы разных регистров, а также цифры и специальные символы.
   
-If the File server, Email server or any other module requiring Users
-and groups module is installed from the Software center, the ``admin``
-user is also available to access the web interface with same
-privileges as the ``root`` user. See :ref:`admin_user-section` for
-details.
+Если модуль File server, Email server или любой другой модуль требует
+установленного модуля Users and groups из Software center, то пользователь
+``admin`` сможет получать доступ к веб интерфейсу с теми же привилегиями, что и пользователь ``root``.
+Подробности см. в :ref:`admin_user-section`.

@@ -44,92 +44,88 @@
 
 .. _users_services-section:
 
-Access to services
+Доступ к сервисам
 ------------------
 
-After creation a user can be enabled only to some (or all) services.
-This configuration can be done using the :guilabel:`Services` tab page.
+После создания пользователя, можно указать, к каким сервис он будет иметь доступ.
+Это производиться на странице :guilabel:`Services`.
 
 .. _groups-section:
 
-Groups
+Группы
 ======
 
-A group of user can be used to assign special permissions to some users or to create email distribution lists.
+Пользовательские группы могут использоваться для присвоения специальных прав доступа пользователям, а также для создания листов рассылки (с помощью электронной почты).
 
-As for the users, a group can be enabled to some (or all) services.
+Как и для пользователей, группам возможно разрешить использование как нескольких, так и всех сервисов.
 
-.. tip:: For delegating permissions to the Server Manager, use the groups ``managers`` or ``administrators``.
+.. tip:: Для назначения прав доступа в Server Manager, необходимо воспользоваться группами ``managers`` или ``administrators``.
 
-Two special groups can be created, the users who belong in one of these groups are granted access to the panels of the Server Manager
+Для организации доступа к панелям веб интерфейса Server Manager следует создать две специальные группы - ``managers`` или ``administrators``.
 
-* :dfn:`administrators`: Users of this group have the same permissions as the root or admin user.
-* :dfn:`managers`: Users of this group are granted access to the Management section.
+* :dfn:`administrators`: Пользователям этой группы будут предоставлены такие же права как и пользователя root или пользователю admin.
+* :dfn:`managers`: Пользователям, входящим в эту группу предоставляется доступ к функциям управления.
 
 
 .. _admin_user-section:
 
-Admin account
+Учетная запись администратора
 =============
 
-The :guilabel:`Users` page has one default entry: :dfn:`admin`. This
-account allows access to the Server Manager with the same permissions
-of the :dfn:`root` account.  It is initially *disabled* and has no
-access from the console.
+Страница :guilabel:`Users` по умолчанию имеет одну запись: :dfn:`admin`. Эта 
+учетная запись имеет доступ к веб интерфейсу Server Manager с такими же правами, что и пользователь
+:dfn:`root`. Первоначально учетная запись :dfn:`admin` заблокирована и не имеет доступа к консоли.
 
-.. tip:: To enable ``admin`` account set its password.
+.. tip:: Для разблокировки ``admin`` необходимо ей установить пароль.
 
-Where applicable, the ``admin`` user also is granted special
-privileges on some specific services, such as :ref:`joining a
-workstation in Samba domain <samba_pdc>`.
+Эта учетная запись ``admin`` используется для предоставления прав в специфичных сервисах,
+таких как :ref:`Подключение рабочей станции к домену Samba <samba_pdc>`
 
-
-Password management
+Управление паролями
 ===================
 
-The system provides the ability to set constraints on password :dfn:`complexity` and :dfn:`expiration`.
+На пароль в система накладываются следующие ограничения - сложность (:dfn:`complexity`) и время жизни (:dfn:`expiration`).
 
-Password policies can be changed from web interface after installing ``nethserver-password`` module.
+Политику, накладываемую на пароли, можно изменить в веб интерфейсе модуля ``nethserver-password``, сразу после установки.
 
-Complexity
+Сложность
 -----------
 
-The :index:`password` complexity is a set of minimum conditions that password must match to be accepted by the system: 
-You can choose between two different management policies about password complexity:
+Сложность :index:`password` - это минимальный набор условий, удовлетворяя которым он будет принят системой: 
+Имеется возможность выбора сложности пароли между двумя различными политиками:
 
-* :dfn:`none`: there is no specific control over the password entered, but minimum length is 7 characters
+* :dfn:`none`: пароль должен состоять минимум из 7 символов, остальные условия не предъявляются
 * :dfn:`strong`
 
-The :index:`strong` policy requires that the password must comply with the following rules:
+Политика :index:`strong` состоит из следующего набора правил:
 
-* Minimum length of 7 characters
-* Contain at least 1 number
-* Contain at least 1 uppercase character 
-* Contain at least 1 lowercase character
-* Contain at least 1 special character
-* At least 5 different characters
-* Must be not present in the dictionaries of common words 
-* Must be different from the username
-* Can not have repetitions of patterns formed by 3 or more characters (for example the password As1.$ AS1. $ is invalid)
+* Минимальная длина пароля - 7 символов
+* Пароль должен содержать как минимум 1 цифру
+* Пароль должен содержать как минимум 1 символ в нижнем регистре
+* Пароль должен содержать как минимум 1 символ в верхнем регистре
+* Пароль должен содержать как минимум 1 специальный символ
+* Пароль должен содержать как минимум 5 различных символ
+* Пароль должен отсутствовать в словаре частоупотребляемых слов
+* Пароль должен отличаться от имени пользователя
+* Пароль не может повторять рисунка для трёх и более символов (на пример, пароль - As1.$ AS1. $ системой принят не будет)
 
-The default policy is :dfn:`strong`.
+Политика по умолчанию - :dfn:`strong`.
 
-.. warning:: Changing the default policies is highly discouraged. The use of weak passwords often lead
-   to compromised servers by external attackers.
+.. warning:: Изменение политики по умолчанию не крайне рекомендовано. Использование простого пароля часто ведет к уязвимости сервера для внешних атак.
 
-To change the setting to none ::
+Установка политики none ::
 
   config setprop passwordstrength Users none
 
-To change the setting to strong ::
+Установка политики strong ::
 
   config setprop passwordstrength Users strong
 
-Check the policy currently in use on the server ::
+Проверка текущей установленной политики на сервере ::
 
   config getprop passwordstrength Users
 
-Expiration
+Время жизни пароля
 ----------
 
 The  :index:`password expiration` is enabled by default to 6 months from the time when the password is set.

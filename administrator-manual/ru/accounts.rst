@@ -128,107 +128,104 @@
 Время жизни пароля
 ----------
 
-The  :index:`password expiration` is enabled by default to 6 months from the time when the password is set.
-The system will send an e-mail to inform the users when their password is about to expire.
+По умолчанию значение параметра :index:`Время жизни пароля` установлено равное 6 месяцам.
+По истечение этого срока, системой будет направлено электронное письмо пользователю о необходимости смены пароля.
 
-.. note:: The system will refer to the date of the last password change, 
-   whichever is the earlier more than 6 months, the server will send an email to indicate that password has expired. 
-   In this case you need to change the user password.
-   For example, if the last password change was made in January, and the activation of the deadline in October, 
-   the system will assume the password changed in January is expired, and notify the user.
+.. note:: Для неактивированных пользователей, срок жизни считается от даты последней смены пароля
+   и при активации учетной записи, система вышлет письмо с указанием времени жизни пароля.
+   В этом случае необходимо изменить пароль.
+   К примеру, если датой последней смены пароля считается январь, а активации - октябрь, то система
+   будет считать истекшим пароль измененный в январе и попросит сменить его.
+   
 
-If you wish to bypass the password expiration globally (also allow access for users with expired password) ::
+Для отключения ограничения времени жизни пароля (а также разрешения доступа пользователей с истекшим паролем) служат следующие команды ::
 
   config setprop passwordstrength PassExpires no
   signal-event password-policy-update
 
-To disable password expiration for a single user (replace username with the user) ::
+Для отключения ограничения времени жизни пароля для конкретного пользователя следует применить следующие команды ::
 
   db accounts setprop <username> PassExpires no
   signal event password-policy-update
 
 
-Below are the commands to view enabled policies.
+Представленные ниже команды позволяют посмотреть примененные политики.
 
-Maximum number of days for which you can keep the same password (default: 180) ::
+Максимальное количество дней, в течение которых нельзя повторять пароль из ранее используемых ::
 
   config getprop passwordstrength MaxPassAge
 
 
-Minimum number of days for which you are forced to keep the same password (default 0) ::
+Минимальное количество дней, в течении которых можно использовать один пароль ::
 
   config getprop passwordstrength MinPassAge
 
 
-Number of days on which the warning is sent by email (default: 7) ::
+Количество дней, в течении которых будет приходить напоминание о смене пароля ::
 
   config getprop passwordstrength PassWarning
 
 
-To change the parameters replace the :command:`getprop` command with :command:`setprop`,  
-then add the desired value at end of the line. Finally apply new configurations::
+Указывая в конце команды нужное значение и используя команду :command:`setprop` вместо :command:`getprop` можно изменять необходимые параметры. Для того чтобы измененный параметр был применен системой необходимо ввести команду::
 
   signal-event password-policy-update
 
 
 
-For example, to change to 5 "Number of days on which the warning is sent by email" ::
+На пример, для изменения количества дней, в течении которых будет приходить письмо о необходимости смены пароля следует воспользоваться командой ::
 
  config setprop passwordstrength PassWarning 5
  signal-event password-policy-update
 
 
 
-Effects of expired password
+Влияние времени жизни пароля
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-After password expiration, the user will be able to read and send mails but can no longer access the shared folders and printers (Samba) or other computer if the machine is part of the domain. 
+После истечения времени жизни пароля, пользователь сможет получить доступ на чтение и отправку писем, но не получит доступ к общим папкам и принтерам Samba сервера, а также компьютерам, если они являются частью домена. 
 
 
-Domain password
+Доменный пароль
 ----------------
 
-If the system is configured as a domain controller, users can change their password using the Windows tools.
+Если система сконфигурирована как контроллер домена, то пользователь может изменять свои пароль с помощью Windows утилит.
 
-In the latter case you can not set passwords shorter than 6 *characters* regardless of the server policies.
-Windows performs preliminary checks and sends the password to the server where they are then evaluated 
-with enabled policies.
+В этом случае, пользователь не сможет установить пароль длиной менее 6 *символов*, в независимости от политик сервера, так как Windows осуществляет первичную проверку пароля и только потом отсылает его на сервер, для проверки на соответствие политикам сервера.
 
-Notification language
+Язык оповещений
 =====================
 
-Default language for notifications is English.
-If you wish to change it, use the following command: ::
+По умолчанию язык оповещений - английский.
+Для смены языка необходимо воспользоваться командой: ::
 
   config setprop sysconfig DefaultLanguage <lang>
 
-Example for Italian: ::
+На пример, для смены на итальянский: ::
 
   config setprop sysconfig DefaultLanguage it_IT.utf8
 
-Import users
+Импорт пользователей
 ============
 
-The system can import a list of users from a CSV file.
-The file must contain a line per user, each line must have TAB-separated fields and must respect following format: ::
+Импорт пользователей осуществляется с помощью файлов CSV.
+Файл должен состоять из параметров пользователей (по одной линии на каждого пользователя), с табуляцией в качестве разделителя полей, и удовлетворять следующему формату: ::
 
- username    firstName    lastName    email    password
+ имяпользователя    имя    фамилия    email    пароль
 
-Example: ::
+На пример: ::
 
   mario   Mario   Rossi   mario@example.org       112233
 
 
-Make sure the mail server is installed, then execute: ::
+После того как убедитесь, что почтовый сервис запущен, запустите следующую команду: ::
 
   /usr/share/doc/nethserver-directory-<ver>/import_users <youfilename>
 
-For example, if the user's file is :file:`/root/users.csv`, execute following command: ::
+На пример, если файл с данными пользователей - :file:`/root/users.csv`, запустите команду: ::
 
   /usr/share/doc/nethserver-directory-`rpm --query --qf "%{VERSION}" nethserver-directory`/import_users /root/users.csv
 
 
-The command can be executed multiple times: already existing users will be skipped. 
+Команда может быть запущена несколько раз, уже созданные учетные записи будут пропущены. 
 
-.. note:: The command will fail if mail server module is not installed
-
+.. note:: Команда завершится с ошибкой, если не установлен модуль почтового сервиса

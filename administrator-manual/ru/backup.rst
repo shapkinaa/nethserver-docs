@@ -9,134 +9,130 @@
 * :index:`данных сервера`
 
 Резервное копирование конфигурации сервера включает конфигурационные файлы Системы. 
-Оно запускается каждую и будет создавать архив, :file:`/var/lib/nethserver/backup/backup-config.tar.xz`, только если за последние 24 часа был изменен какой-либо файл.
+Оно запускается каждую ночь, архив (:file:`/var/lib/nethserver/backup/backup-config.tar.xz`) будет создан только в случае если за последние 24 часа был изменен какой-либо файл.
 В процессе резервного копирования конфигурации сервера также сохраняется список установленных модулей. Все модули могут быть переустановлены в процессе восстановления конфигурации из резервной копии.
-The purpose of this kind of backup is to quickly restore a machine in case of disaster recovery. 
-When the machine is functional, a full data restore can be done even if the machine is already in production.
+Целью этого типа резервного копирования является быстрое восстановление системы после сбоя. Функциональность сервисов может быть восстановлена при работающем сервере.
 
-Data backup is enabled installing "backup" module and contains all data like user's home directories and mails. It runs every night and can be full or incremental on a weekly basis. 
-This backup also contains the archive of the configuration backup.
+Для резервного копирование данных требуется установленный и разрешенный к использованию модуль "backup", в котором должен быть настроено копирование всех пользовательских данных, таких как домашние директории и электронная почта. Резервное копирование данных запускается каждую ночь и может быть полным или инкриментальным, на основе еженедельных полных копий.
+В архив с еженедельной резервной копией включается резервная копия конфигурации сервера.
 
-Data backup can be saved on three different destinations:
+Резервное копирование данных может быть сохранено на три разных носителя:
 
-* USB: disk connected to a local USB port (See: :ref:`backup_usb_disk-section`)
-* CIFS: Windows shared folder, it's available on all NAS (Network Attached Storage)
-* NFS: Linux shared folder, it's available on all NAS, usually faster than CIFS
+* USB: диск подключенный к локальному USB порту (подробнее см.: :ref:`backup_usb_disk-section`)
+* CIFS: общая папка Windows, которая доступна на любом NAS (Network Attached Storage)
+* NFS: общая папка Linux, которая доступна на любом NAS, как правило это быстрее чем CIFS
 
-The backup status can be notified to the system administrator or to an external mail address.
+Результат процедуры резервного копирования может быть отправлен на электронную почту системному администратору, либо на любой другой внешний адрес.
 
-.. note:: The destination directory is based on the server host name: in case of
-   FQDN change, the administrator should take care to copy backup data from
-   the old directory to the new one.
+.. note:: Определение целевой директории для резервного копирования происходит на основе имени сервера, на котором она располагается. К примеру, при смене FQDN сервера, администратор должен аккуратно перенести резервные копии на новый сервер.
 
-Data restore
+Восстановление данных
 ============
 
-Make sure that backup destination is reachable (for example, USB disk must be connected).
+Удостовериться, что дректория назначения доступна для записи (к примеру, USB диск должен быть подключен).
 
-Command line
+Командная строка
 ------------
 
-Listing files
+Вывод списка файлов
 ^^^^^^^^^^^^^
 
-It's possible to list all files inside the last backup using this command: ::
+Для вывода списка всех файлов, находщихся в последней резервной копии необходимо ввеста следующую команду: ::
 
  backup-data-list
 
-The command can take some times depending on the backup size.
+В зависимости от размера резервной копии, выполнение команды займет какое-то время.
 
-File and directory
+Файлы и директории
 ^^^^^^^^^^^^^^^^^^
 
-All relevant files are saved under :file:`/var/lib/nethserver/` directory:
+Файлы, находящиеся в директории :file:`/var/lib/nethserver/`, размещаются в соответствующих поддиректориях:
 
-* Mails: :file:`/var/lib/nethserver/vmail/<user>`
-* Shared folders: :file:`/var/lib/nethserver/ibay/<name>`
-* User's home: :file:`/var/lib/nethserver/home/<user>`
+* Почта: :file:`/var/lib/nethserver/vmail/<user>`
+* Общие папки: :file:`/var/lib/nethserver/ibay/<name>`
+* Домашние директории: :file:`/var/lib/nethserver/home/<user>`
 
-To restore a file/directory, use the command: ::
+Для восставновления файла/директории используется команда: ::
 
   restore-file <position> <file>
 
-Example, restore *test* mail account to :file:`/tmp` directory: ::
+Например, восстановление почты учетной записи *test* в директорию :file:`/tmp`: ::
 
   restore-file /tmp /var/lib/nethserver/vmail/test
 
-Example, restore *test* mail account to original position: ::
+Например, восстановление почты учетной записи *test* в оригинальную директорию: ::
 
   restore-file / /var/lib/nethserver/vmail/test
 
 
-The system can restore a previous version of directory (or file).
+Система позволяет восстановить предыдущую версию директории (или файла).
 
-Example, restore the version of a file from 15 days ago: ::
+Например, восстановление 15-ти дневной версии файла: ::
 
   restore-file -t 15D /tmp "/var/lib/nethserver/ibay/test/myfile" 
 
-The ``-t`` option allows to specify the number of days (15 in this scenario).
+Флаг ``-t`` позволяет указать количество дней (15 в этом примере).
 
-Graphic interface
+Графический интерфейс
 -----------------
 
-In the :menuselection:`Restore Data` menu section it is possible to search, select and restore
-one or more directories from backup, navigating the graphical tree with all paths included in the backup.
+В секции меню :menuselection:`Восстановление данных` возможен поиск, выбор и восстановление
+одной или нескольких директорий. Навигация осуществляется с помощью графического дерева каталогов, содержащихся в резервной копии.
 
-There are two options to restore:
+Два возможных пути восстановления:
 
-* Restore data in the original path, the current files in the filesystem are overwritten by the restored files from backup.
-* Restore data in original path but the restored files from backup are moved on a new directory (the files are not overwritten) in this path: ::
+* Восстановление данных происходит в оригинальное место, текущие файлы в файловой системе будут переписаны восстанавливаемыми из резервной копии.
+* Восстановление данных происходит в оригинальное место, но восстанавливаемые файлы будут помещены в новую директорию (файлы переписаны не будут) этого пути: ::
 
-  /complete/path/of/file_YYYY-MM-DD (YYYY-MM-DD is the date of restore)
+  /complete/path/of/file_YYYY-MM-DD (YYYY-MM-DD, где дата восстановления данных)
 
-To use the search field, simply insert at least 3 chars and the searching starts automatically, highlighting the matched directories
+Для поиска следует ввести не менее 3 символов в поле поиска и подпадающие под условие директории будут подсвечены автоматически.
 
-It is possible to restore the directories by clicking on **Restore** button.
+Восставноление выбранных данных осуществляется с помощью кнопки **Restore**.
 
-.. note:: Multiple selection can be done with Ctrl key pressed.
+.. note:: Множественный выбор восстанавливаемых данных можно сделать с помощью клавиши Ctrl.
 
 
-Disaster recovery
+Восстановление после сбоя
 =================
 
-The system is restored in two phases: configuration first, then data. 
-Right after configuration restore, the system is ready to be used if proper packages are installed. 
-You can install additional packages before or after restore.
-For example, if mail-server is installed, the system can send and receive mail.
+Восстановление системы осуществляется в два этапа: первый - восстановление конфигурации, второй - данных. 
+Сразу после восстановления конфигурации система готова к использованию, если установлены все необходимые пакеты. 
+Вы можете установить дополнительные пакеты до восстановления или после.
+К примеру, если почтовый сервер установлен, то система может отправлять и получать письма.
 
-Other restored configurations:
+Другие восстанавливаемые данные конфигурации:
 
-* Users and groups
-* SSL certificates
+* пользователи и группы
+* SSL сертификаты
 
-.. note:: The root/admin password is not restored.
+.. note:: Пароль пользователя root/admin не восстанавливается.
 
-Steps to be executed:
+Шаги для выполнения восстановления:
 
-1. Install the new machine with the same host name as the old one
-2. Configure a data backup, so the system can retrieve saved data and configuration
-3. If the old machine was the network gateway, remember to re-install firewall module
-4. Restore the configuration backup from page :guilabel:`Backup
-   (configuration) > Restore` in Server Manager, or executing:
+1. Установите новый сервер с тем же именем, что и старый
+2. Настройте резервное копирование, чтобы система могла видеть сохраненные резервные копии
+3. Если старый сервер выступал в роли сетевого шлюза, то не забудьте установить модуль межсетевого экрана
+4. Восстановите резервную копию конфигурации с помощью страницы :guilabel:`Резервное копирование
+   (конфигурация) > Восстановление` в веб интерфейсе Server Manager, или запустите команду из консоли:
    :command:`restore-config`
-5. If a warning message requires it, reconfigure the network roles assignment. See :ref:`restore-roles-section` below.
-6. Verify the system is functional
-7. Restore data backup executing: :command:`restore-data`
+5. Перенастройте сетевые роли, если этого требует предупреждающее сообщение. См. ниже :ref:`restore-roles-section`.
+6. Проверьте функционал системы
+7. Восстановите данные, запустив команду: :command:`restore-data`
 
 
 .. _restore-roles-section:
    
-Restore network roles 
+Восстановление сетевых ролей
 ---------------------
 
-If a role configuration points to a missing network interface, the
-:guilabel:`Dashboard`, :guilabel:`Backup (configuration) > Restore`
-and :guilabel:`Network` pages pop up a warning. This happens for
-instance in the following cases:
+В случае если в конфигурации описан отсутствующий сетевой интерфейс, на страницах
+:guilabel:`Dashboard`, :guilabel:`Резервное копирование (конфигурация) > Восстановление`
+и :guilabel:`Сеть` будут показаны предупреждающие сообщения. Это происходит в следующих случаях:
 
-* configuration backup has been restored on a new hardware
-* one or more network cards have been substituted
-* system disks are moved to a new machine
+* резервная копия конфигурации восстановлена на новое аппаратное обеспечение
+* одна или несколько сетевых карт заменены
+* системный диск установлен на новый сервер
 
 The warning points to a page that lists the network cards present in
 the system, highlighting those not having an assigned :ref:`role

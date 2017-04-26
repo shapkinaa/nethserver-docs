@@ -134,114 +134,108 @@
 * одна или несколько сетевых карт заменены
 * системный диск установлен на новый сервер
 
-The warning points to a page that lists the network cards present in
-the system, highlighting those not having an assigned :ref:`role
-<network-section>`. Such cards have a drop down menu where to select a
-role available for restoring.
+Сообщение указывает на страницу, на которой подсвечены сетевые карты с не назначенной ролью (:ref:`role
+<network-section>`). Для таких карты можно выбрать восстанавливаемую роль с помощью выпадающего списка.
 
-For instance, if a card with the *orange* role has been replaced, the
-drop down menu will list an element ``orange``, near the new
-network card.
+Например, если была заменена карта с ролью *оранжевый*, то в выпадающем списке, для новой карты, будет предложен ``оранжевый`` элемент.
 
-The same applies if the old card was a component of a logical
-interface, such as a bridge or bond.
+То же самое относится и к картам, являющихся частью логического интерфейса, таких как мост и связь.
 
-By picking an element from the drop down menu, the old role is
-transferred to the new physical interface.
+После выбора элемента выпадающего списка, старая роль новому физическому интерфейсу.
 
-Click the :guilabel:`Submit` button to apply the changes.
+Для применения изменных значений необходимо нажать на кнопку :guilabel:`Submit`.
 
-.. warning:: Choose carefully the new interfaces assignment: doing a mistake
-             here could lead to a system isolated from the network!
+.. warning:: Будьте осторожны при изменении настроек интерфейсов.
+             Одна ошибка может привести к сетевой связи с системой!
 
-If the missing role is ``green`` an interactive procedure asks to fix
-the configuration at boot-time, to ensure a minimal network
-connectivity and login again on the Server Manager.
+Если недостающая роль "зеленая", интерактивная процедура запрашивает исправление конфигурации во время загрузки,
+чтобы обеспечить минимальное сетевое подключение и снова войти в Server Manager.
+
 
 .. _backup_config_rpms:
 
-Restore installed modules
+Восстановление установленных модулей
 -------------------------
 
-By default the process of configuration restore will also restore all previously installed modules.
+По умолчанию процесс восстановления конфигурации произведет восстановление всех ранее установленных модулей.
 
-To avoid the reinstallation, execute this command before the restore: ::
+Для избежания повторной установки модулей следует выполнить команду: ::
 
   config setprop backup-config reinstall disabled
      
 .. _backup_customization-section:
 
-Data backup customization
+Настройка резервной копии данных
 =========================
 
-If additional software is installed, the administrator can edit
-the list of files and directories included (or excluded).
+Если установлено дополнительное программное обеспечения, администратор может редактировать список резервируемых файлов или директорий, как включать в список, так и выключать их от туда.
 
-Inclusion
+Включение файлов в список
 ---------
 
-If you wish to add a file or directory to data backup, add a line to the file :file:`/etc/backup-data.d/custom.include`.
+Если вы хотите включить файл или директорию в список данных резервного копирования, то необходимо добавить путь к файлу или директории в файл :file:`/etc/backup-data.d/custom.include`.
 
-For example, to backup a software installed inside :file:`/opt` directory, add this line: ::
+Например, для резервного копирования программного обеспечения установленного в директорию :file:`/opt`, достаточно добавить следующую строку: ::
 
   /opt/mysoftware
 
-Exclusion
+Исключение файлов из списка
 ---------
 
-If you wish to exclude a file or directory from data backup, add a line to the file :file:`/etc/backup-data.d/custom.exclude`.
+Если вы хотите исключить файл или директорию из резервного копирования, добавьте строку в файл :file:`/etc/backup-data.d/custom.exclude`.
 
-For example, to exclude all directories called *Download*, add this line: ::
+Например, для исключения всех директорий с именем *Download* следует добавить: ::
 
   **Download**
 
-To exclude a mail directory called *test*, add this line: ::
+Для исключения директории с именем *test*: ::
 
   /var/lib/nethserver/vmail/test/ 
 
 
-Same syntax applies to configuration backup. Modification should be done inside the file :file:`/etc/backup-config.d/custom.exclude`.
+Те же самые правила используются для настройки резервного копирования конфигураций. Все изменения должны вносится в файл :file:`/etc/backup-config.d/custom.exclude`.
 
 
-.. note:: Make sure not to leave empty lines inside edited files.
+.. note:: Не оставляйте пустых строк в файлах
 
 
-Configuration backup customization
+Настройка резервной копии конфигурации
 ==================================
 
-In most cases it is not necessary to change the configuration backup. 
-But it can be useful, for example, if you have installed a custom SSL certificate. 
-In this case you can add the file that contains the certificate to the list of files to backup.
+В большинстве случаев нет необходимости изменять состав резервной копии конфигурации системы. 
+Но это возможно, например, вы установили собственные SSL сертификаты. 
+В этом случае вы можете добавить файл с сертификатом в список файлов помещаемых в резервную копию.
 
-Inclusion
+Включение файлов в список
 ---------
 
-If you wish to add a file or directory to configuration backup, add a line to the file :file:`/etc/backup-config.d/custom.include`.
+Если вы хотите включить файл или директорию в список данных резервного копирования, то необходимо добавить путь к файлу или директории в файл :file:`/etc/backup-config.d/custom.include`.
 
-For example, to backup :file:`/etc/pki/mycert.pem` file , add this line: ::
+К примеру, для резервирования файла :file:`/etc/pki/mycert.pem` следует добавить путь: ::
 
   /etc/pki/mycert.pem
 
-Do not add big directories or files to configuration backup.
+Не добавляйте фольшие директории или файлы в резервную копию конфигурации.
 
-Exclusion
+Исключение файлов из списка
 ---------
 
-If you wish to exclude a file or directory from configuration backup, add a line to the file :file:`/etc/backup-config.d/custom.exclude`.
+Если вы хотите исключить файл или директорию из резервного копирования, добавьте строку в файл :file:`/etc/backup-config.d/custom.exclude`.
 
 .. note:: 
-   Make sure not to leave empty lines inside edited files.
-   The syntax of the configuration backup supports only simple file and directory paths.
+   Не оставляйте пустых строк в файлах.
+   Конфигурационные файлы могут состоять только из строк с именами файлов и директорий.
 
 .. _backup_usb_disk-section:
 
-USB disk configuration
+Настройка USB диска
 ======================
 
-The best filesystem for USB backup disks is EXT3. FAT filesystem is supported but *not recommended*,
-while NTFS is **not supported**.
+Наилучшим вариантом файловой системы для USB диска резервного копирования является EXT3.
+Файловая система FAT поддерживается, но *не рекомендуется* к использованию,
+NTFS пока **не поддерживается**.
 
-Before formatting the disk, attach it to the server and find the device name: ::
+Перед форматированием диска следует подключить его к серверу и произвести поиск имени устройства: ::
 
  # dmesg | tail -20
 
@@ -262,25 +256,25 @@ Before formatting the disk, attach it to the server and find the device name: ::
  Apr 15 16:20:49 mynethserver kernel: sd 7:0:0:0: Attached scsi generic sg3 type 0
  Apr 15 16:20:49 mynethserver kernel: usb-storage: device scan complete
  
-Another good command could be: ::
+Другой хорошей командой для этого является: ::
 
  lsblk -io KNAME,TYPE,SIZE,MODEL
 
-In this scenario, the disk is accessibile as *sdc* device.
+В этом примере, подключенный диск получил имя устройства *sdc*.
 
-* Create a Linux partition on the whole disk: ::
+* Создание Linux раздела на всем диске: ::
 
     echo "0," | sfdisk /dev/sdc
 
-* Create the filesystem on *sdc1* partition with a label named *backup*: ::
+* Создание файловой системы на разделе *sdc1* с меткой *backup*: ::
 
     mke2fs -v -T largefile4 -j /dev/sdc1 -L backup
 
-* Detach and reconnect the USB disk:
+* Переподключение USB диска:
 
-  You can simulate it with the following command: ::
+  Вы можете это произвести не только физически, но и с помощью команды: ::
 
     blockdev --rereadpt /dev/sdc
 
-* Now the *backup* label will be displayed inside the :guilabel:`Backup (data)` page.
+* После этого метка *backup* должна появится на странице :guilabel:`Резервное копирование (данные)`.
 

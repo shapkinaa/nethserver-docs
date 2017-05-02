@@ -53,73 +53,70 @@ Dashboard
 дополнительные сети со специальным функционалом, таким как демилиторизованные зоны и гостевые сети.
 
 |product| поддерживает не ограниченное количество сетевых интерфейсов.
-Любая сеть управляется по следующим правилам:
+Любая сеть управляемая системой должна соответствовать следующим правилам:
 
-* networks must be physically separated (multiple networks can't be connected to the same switch/hub)
-* networks must be logically separated: each network must have different addresses
-* private networks, like LANs, must follow address's convention from RFC1918 document.
-  See :ref:`RFC1918-section`
+* сети должны быть физически разделены (множество сетей не может быть подключено к одному коммутатору/концентратору)
+* сети должны быть логически разделены: каждая сеть дожна иметь собственное адресное пространство
+* адресация частных сетей, таких как LAN, должна следовать документу RFC1918. Подробнее см.:ref:`RFC1918-section`
 
-.. index:: zone, role
+.. index:: зоны, роль
 
-Every network interface has a specific *role* which determinates its behavior. Roles are identified by colors.
-Each role correspond to a well-known *zone* with special network traffic rules:
+Каждый сетевой интерфейс имеет специальную *роль*, которая означает его поведение. Каждая роль идентифицируется цветом и соответствует заранее заданной *зоне* со специальными правилами прохождения сетевого трафика:
 
-* *green*: local network. Hosts on this network can access any other configured network
-* *blue*: guests network. Hosts on this network can access orange and red network, but can't access to green zone
-* *orange*: DMZ network.  Hosts on this network can access red networks, but can't access to blue, orange and green zones
-* *red*: public network. Hosts on this network can access only the server itself
+* *green*: локальная сеть. Серверы этой сети могут получить доступ к серверам любой другой имеющейся сети
+* *blue*: гостевая сеть. Серверы этой сети могут получить доступ к серверам сетей *orange* и *red*, но не могут - к *green*
+* *orange*: сеть DMZ. Серверы этой сети могут получить доступ к серверам сети *red*, но не могут - к *blue*, *orange* и *green*
+* *red*: публичная сеть. Серверы этой сети могут получить доступ только к серверам своей сети
 
-See :ref:`policy-section` for more information on roles and firewall rules.
+Для более подробной информации о ролях и правилах межсетевого экрана, см. :ref:`policy-section`.
 
-.. note:: The server must have at least one network interface. When the server has only one interface, this interface must have green role.
+.. note:: Сервер должен иметь, как минимум один сетевой интерфейс. Когда у сервера установлен только один интерфейс, то ему будет назначена ролько *green*.
 
-If the server is installed on a public VPS (Virtual Private Server), it should must be configured with a green interface.
-All critical services should be closed using :ref:`network_services-section` panel.
+Если сервер установлен на VPS (Virtual Private Server), то его интерфейс должен быть настроен в *green* сети.
+Все критичные сервисы должны быть закрыты с помощью панели :ref:`network_services-section`.
 
 .. _alias_IP-section:
 
-Alias IP
+Псевдонимы IP
 --------
 
-Use alias IP to assign more IP addresses to the same NIC.
+Используя псевдонимы IP адреса можно назначить более одного IP на одну физическую сетевую карту.
 
-The most common use is with a red interface: when the ISP provides a pool of public IP addresses (within the same subnet) you can add some (or all) of them to the same red interface and manage them individually (e.g. in the port forward configuration).
+Наиболее частое использование, совместно с *красным* интерфейсом, когда провайдер интернет услуг предоставляется публичный IP адрес (или подсеть), вы можете добавить его (или подсеть) в *красный* интерфейс и управлять ими индивидуально (например, в настройках перенаправления портов).
 
-Alias IP section can be found in the dropdown menu of the related network interface.
+Раздел псевдонимов IP адреса располагается в выпадающем меню соответствующего сетевого интерфейса.
 
-.. note:: Alias IPs on PPPoE interface could not work properly, due to different implementations of the service made by internet providers.
+.. note:: Псевдонимы IP адресов для интерфейсов PPPoE могут не работать, это зависит от реализации сервиса, предоставляемого интернет провайдером.
 
 .. _logical_interfaces-section:
 
-Logical interfaces
+Логические интерфейсы
 ------------------
 
-In :guilabel:`Network` page press :guilabel:`New interface` button to
-create a logical interface. Supported logical interfaces are:
+На странице :guilabel:`Сеть` нажав кнопку :guilabel:`Новый интерфейс` можно создать новый логический интерфейс.
+Поддерживаемые типы интерфейсов:
 
-* :index:`bond`: arrange two or more network interfaces, provides load balancing and fault tolerance
-* :index:`bridge`: connect two different networks, it's often used for bridged VPN and virtual machine
-* :index:`VLAN` (Virtual Local Area Network): create two or more logically separated networks using a single interface
-* :index:`PPPoE` (Point-to-Point Protocol over Ethernet): connect to Internet through a DSL modem
+* :index:`bond`: объединяет два или более логических интерфейса, предоставляя балансировку нагрузки и отказоустойчивость
+* :index:`bridge`: соединяет две различные сети, часто используется для соединения VPN и виртуальной машины
+* :index:`VLAN` (Virtual Local Area Network, виртуальная локальная сеть) позволяет создать две или более логических разделенных сети используя один интерфейс
+* :index:`PPPoE` (Point-to-Point Protocol over Ethernet): подключение к сети Интернет с использованием DSL модема
 
-**Bonds** allow you to aggregate bandwidth or tollerate link faults. Bonds can be configured in multiple modes.
+Тип **Bond** позволяет агреггировать полосу пропускания или обеспечить отказоустойчивость сетевых подключений, и может быть настроен в многонодовой конфигурации.
 
-Modes providing load balancing and fault tolerance:
+Режимы предоставляющие балансировку и отказоустойчивость:
 
 * Balance Round Robin (recommended)
 * Balance XOR
-* 802.3ad (LACP): it requires support at driver level and a switch with IEEE 802.3ad Dynamic link aggregation mode enabled
-* Balance TLB: it requires support at driver level
+* 802.3ad (LACP): этот режим должен поддерживаться на уровне драйвера, а также должен быть включен IEEE 802.3ad (Dynamic link aggregation)
+* Balance TLB: этот режим должен поддерживаться на уровне драйвера
 * Balance ALB
 
-Modes providing fault tolerance only:
+Режимы предоставляющие только отказоустойчивость:
 
-* Active backup (recommended)
+* Active backup (рекомендован)
 * Broadcast policy
 
-A **bridge** has the function to connect different network segments, for example by allowing virtual machines, or client connected using a VPN,
-to access to the local network (green).
+С помощью **bridge** можно соединить различные сегменты сети, к примеру, подсоединять виртуальные машины или подключенных пользователей, использующих VPN, к локальной сети (*green*).
 
 When it is not possible to physically separate two different networks, you can use a tagged **VLAN**. The traffic of the two networks can
 be transmitted on the same cable, but it will be handled as if it were sent and received on separate network cards.

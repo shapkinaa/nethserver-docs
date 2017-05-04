@@ -105,7 +105,7 @@ Dashboard
 
 Режимы предоставляющие балансировку и отказоустойчивость:
 
-* Balance Round Robin (recommended)
+* Balance Round Robin (рекомендован)
 * Balance XOR
 * 802.3ad (LACP): этот режим должен поддерживаться на уровне драйвера, а также должен быть включен IEEE 802.3ad (Dynamic link aggregation)
 * Balance TLB: этот режим должен поддерживаться на уровне драйвера
@@ -118,24 +118,23 @@ Dashboard
 
 С помощью **bridge** можно соединить различные сегменты сети, к примеру, подсоединять виртуальные машины или подключенных пользователей, использующих VPN, к локальной сети (*green*).
 
-When it is not possible to physically separate two different networks, you can use a tagged **VLAN**. The traffic of the two networks can
-be transmitted on the same cable, but it will be handled as if it were sent and received on separate network cards.
-The use of VLAN, requires properly configured switches.
+Когда невозможно разделить две разные сети, то вы можете использовать теггированные **VLAN**. Трафик двух сетей может быть передан с помощью одного кабеля, но будет управляться так как если бы он был передан и получен на разных сетевых картах.
+Использование VLAN требует правильно настроенных коммутаторов.
 
-.. warning:: The **PPPoE** logical interface must be assigned the red
-             role, thus requires the gateway functionality. See
-             :ref:`firewall-section` for details.
+.. warning:: Логический интерфейс **PPPoE** должен иметь роль *red*,
+             этого требует функциональность шлюза по умолчанию.
+             Более подробно см. :ref:`firewall-section`.
 
 .. _RFC1918-section:
 
-Address for private networks (RFC1918)
+Адресация частных сетей (RFC1918)
 --------------------------------------
 
-TCP/IP private networks not directly connected to Internet should use special addresses selected by
-Internet Assigned Numbers Authority (IANA).
+Частные сети TCP / IP, не имеющие прямого подключения к Интернет, должны использовать специальные адреса,
+выбранные Internet Assigned Numbers Authority (IANA).
 
 ===============   ===========   =============================
-Private network   Subnet mask   IP addresses interval
+Частные сети      Маска сети    Интервал IP адресов
 ===============   ===========   =============================
 10.0.0.0          255.0.0.0     10.0.0.1 - 10.255.255.254
 172.16.0.0        255.240.0.0   172.16.0.1 - 172.31.255.254
@@ -148,7 +147,7 @@ Private network   Subnet mask   IP addresses interval
 
 .. _network_services-section:
 
-Network services
+Сетевые сервисы
 ================
 
 A :index:`network service` is a service running on the firewall itself.
